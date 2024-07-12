@@ -38,7 +38,7 @@ export class App {
         secret: process.env.SESSION_SECRET || "secret",
         resave: false,
         saveUninitialized: false,
-        cookie: { secure: true, maxAge: 24 * 60 * 60 * 1000 }, // Set to true if using https
+        cookie: { secure: true, maxAge: 24 * 60 * 60 * 1000, httpOnly: false }, // Set to true if using https
       })
     );
 
