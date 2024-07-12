@@ -14,13 +14,11 @@ export class AnalyzeController {
           const news_url = req.body["url"] as string;
           news = (await extractNews(news_url)).text;
         }
-        console.log(news);
         const stockModel = StockModel;
         const stock_data = await stockModel.mongooseModel.findOne({
           code: stock_code,
         });
         if (stock_data) {
-          // TODO Kasih semua topic but how
           const topic = stock_data.makro;
           const analyzeRes = await generateSentimentAnalysis(
             stock_code,
