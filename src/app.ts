@@ -11,6 +11,7 @@ import { AuthRouter } from "./routers/auth.router";
 import { UserRouter } from "./routers/user.router";
 import { AnalyzeRouter } from "./routers/analyze.router";
 import { StockRouter } from "./routers/stock.router";
+import e from "express";
 dotenv.config();
 
 export class App {
@@ -26,6 +27,9 @@ export class App {
     const analyzeRouter = new AnalyzeRouter();
     const stockRouter = new StockRouter();
 
+    this.server.use(
+      express.static("public")
+    );
     this.server.use(
       cors({ origin: "http://localhost:5173", credentials: true }),
       express.json(),
