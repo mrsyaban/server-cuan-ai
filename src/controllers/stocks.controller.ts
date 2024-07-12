@@ -1,12 +1,13 @@
 import { Request, Response } from 'express';
-import Stock from '../models/stocks.model';
+import Stock, { IStocks } from '../models/stocks.model';
 import StockModel from '../models/stocks.model';
+import { Model } from 'mongoose';
 
 export class StocksController {
-  model: any
+  model: Model<IStocks>
 
   constructor() {
-    const model = new StockModel();
+    const model = StockModel;
     this.model = model.mongooseModel;
   }
 

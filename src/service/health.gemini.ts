@@ -62,7 +62,7 @@ const generativeModel = vertex_ai.preview.getGenerativeModel({
 
 export async function generateHealthAnalysis(
   stock: string,
-  topic: string,
+  topic: { name: String; sentiment: Number },
   news: string
 ) {
   try {
