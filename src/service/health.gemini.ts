@@ -72,11 +72,11 @@ const generativeModel = vertex_ai.preview.getGenerativeModel({
 
 export async function generateHealthAnalysis(
   stock: string,
-  net_profit: number,
-  eps: number,
-  pbv: number,
-  roe: number,
-  debt_equity: number
+  net_profit: Number,
+  eps: Number,
+  pbv: Number,
+  roe: Number,
+  debt_equity: Number
 ) {
   const req = {
     contents: [

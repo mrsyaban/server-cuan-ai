@@ -27,8 +27,13 @@ export class App {
     const analyzeRouter = new AnalyzeRouter();
     const stockRouter = new StockRouter();
 
+    const corsOptions = {
+      origin: process.env.CLIENT_URL,
+      credentials: true, 
+    };
+
     this.server.use(
-      cors({ origin: "http://localhost:5173", credentials: true }),
+      cors(corsOptions),
       express.json(),
       express.urlencoded()
     );
@@ -50,7 +55,7 @@ export class App {
         {
           clientID: process.env.GOOGLE_CLIENT_ID || "",
           clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
-          callbackURL: "http://localhost:3000/auth/google/callback",
+          callbackURL: `${process.env.SERVER_URL}/auth/google/callback`,
         },
         async (accessToken, refreshToken, profile, done) => {
           try {
@@ -85,7 +90,7 @@ export class App {
         done(error, null);
       }
     });
-
+    this.server.options('*', cors(corsOptions));
     // Routings
     this.server.use(
       authRouter.getRoute(),

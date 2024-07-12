@@ -34,7 +34,7 @@ export class AuthController {
 
   authenticateGoogleCallback() {
     return (req: Request, res: Response) => {
-      res.redirect("http://localhost:5173");
+      res.redirect(process.env.CLIENT_URL||"");
     };
   }
 
@@ -45,7 +45,7 @@ export class AuthController {
           console.error("Logout error:", err);
           return res.status(500).json({ message: "Logout failed" });
         }
-        res.redirect(process.env.FRONTEND_URL || "http://localhost:5173");
+        res.redirect(process.env.CLIENT_URL || "");
       });
     };
   }

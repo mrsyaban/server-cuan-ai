@@ -1,25 +1,39 @@
 import { Request, Response } from "express";
-import User, { IUser } from "../models/user.model";
 import { generateSentimentAnalysis } from "../service/sentiment.gemini";
 import { generateHealthAnalysis } from "../service/health.gemini";
 import { generateCompanyFactors } from "../service/companydepends.gemini";
 import fs from "fs"
 import PdfParse from "pdf-parse";
 import { splitKeepDelimiter } from "../service/delimiterkeeper";
+import StockModel from "../models/stocks.model";
+import { extractNews } from "../service/extract-news";
 
 export class AnalyzeController {
   getSentimentAnalysis() {
     return async (req: Request, res: Response) => {
       try {
-        const stock_name = req.body["name"] as string;
-        const topic = req.body["topic"] as string;
-        const news = req.body["news"] as string;
-        if (stock_name) {
-            // TODO Get the topic and news from mongodb
-          const analyzeRes = await generateSentimentAnalysis(stock_name, topic, news);
+        const stock_code = req.body["code"] as string;
+        let news = req.body["news"] as string;
+        if (news.length === 0) {
+          const news_url = req.body["url"] as string;
+          news = (await extractNews(news_url)).text;
+        }
+        console.log(news);
+        const stockModel = StockModel;
+        const stock_data = await stockModel.mongooseModel.findOne({
+          code: stock_code,
+        });
+        if (stock_data) {
+          // TODO Kasih semua topic but how
+          const topic = stock_data.makro;
+          const analyzeRes = await generateSentimentAnalysis(
+            stock_code,
+            topic,
+            news
+          );
           res.json(analyzeRes);
         } else {
-          res.status(400).json({ message: "Please provide name" });
+          res.status(400).json({ message: "Please provide valid name" });
         }
       } catch (error) {
         console.error("Error on inference API", error);
@@ -31,16 +45,19 @@ export class AnalyzeController {
   getHealthAnalysis() {
     return async (req: Request, res: Response) => {
       try {
-        const stock_name = req.body["name"] as string;
-        // TODO Get the values from mongo
-        const net_profit = req.body["net_profit"] as number;
-        const eps = req.body["eps"] as number;
-        const pbv = req.body["pbv"] as number;
-        const roe = req.body["roe"] as number;
-        const debt_equity = req.body["debt_equity"] as number;
-        if (stock_name && net_profit && eps && pbv && roe && debt_equity) {
+        const stock_code = req.body["code"] as string;
+        const stockModel = StockModel;
+        const stock_data = await stockModel.mongooseModel.findOne({
+          code: stock_code,
+        });
+        const net_profit = stock_data?.fundamental.net_profit;
+        const eps = stock_data?.fundamental.eps;
+        const pbv = stock_data?.fundamental.pbv;
+        const roe = stock_data?.fundamental.roe;
+        const debt_equity = stock_data?.fundamental.equity;
+        if (stock_code && net_profit && eps && pbv && roe && debt_equity) {
           const analyzeRes = await generateHealthAnalysis(
-            stock_name,
+            stock_code,
             net_profit,
             eps,
             pbv,
