@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import User, { IUser } from "../models/user.model";
-import { generateHealthAnalysis } from "../service/health.gemini";
 import { generateSentimentAnalysis } from "../service/sentiment.gemini";
+import { generateHealthAnalysis } from "../service/health.gemini";
 
 export class AnalyzeController {
   getSentimentAnalysis() {
@@ -12,7 +12,7 @@ export class AnalyzeController {
         const news = req.body["news"] as string;
         if (stock_name) {
             // TODO Get the topic and news from mongodb
-          const analyzeRes = await generateHealthAnalysis(stock_name, topic, news);
+          const analyzeRes = await generateSentimentAnalysis(stock_name, topic, news);
           res.json(analyzeRes);
         } else {
           res.status(400).json({ message: "Please provide name" });
@@ -35,7 +35,7 @@ export class AnalyzeController {
         const roe = req.body["roe"] as number;
         const debt_equity = req.body["debt_equity"] as number;
         if (stock_name && net_profit && eps && pbv && roe && debt_equity) {
-          const analyzeRes = await generateSentimentAnalysis(
+          const analyzeRes = await generateHealthAnalysis(
             stock_name,
             net_profit,
             eps,
