@@ -28,7 +28,7 @@ export class App {
     const stockRouter = new StockRouter();
 
     this.server.use(
-      cors({ origin: "http://localhost:5173", credentials: true }),
+      cors({ origin: "*", credentials: true }),
       express.json(),
       express.urlencoded()
     );
@@ -50,7 +50,7 @@ export class App {
         {
           clientID: process.env.GOOGLE_CLIENT_ID || "",
           clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
-          callbackURL: "http://localhost:3000/auth/google/callback",
+          callbackURL: `${process.env.SERVER_URL}/auth/google/callback`,
         },
         async (accessToken, refreshToken, profile, done) => {
           try {
@@ -112,8 +112,15 @@ export class App {
   }
 
   run() {
-    this.server.listen(this._port, () =>
-      console.log(`listening on port ${this._port}`)
-    );
+    const serverUrl = process.env.SERVER_URL || `http://localhost:${this._port}`;
+    const urlParts = new URL(serverUrl);
+    
+    const port = parseInt(urlParts.port, 10) || this._port;
+    const hostname = urlParts.hostname;
+  
+    this.server.listen(port, hostname, () => {
+      console.log(`Server listening on ${serverUrl}`);
+    });
+  
   }
 }
