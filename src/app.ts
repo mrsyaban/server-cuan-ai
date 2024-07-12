@@ -94,10 +94,10 @@ export class App {
   connectDB() {
     // Database
     try {
-      if (!process.env.MONGO_URI) {
+      if (!process.env.MONGODB_URI) {
         throw new Error("MONGO_URI is not defined in the environment variables.");
       }
-      mongoose.connect(process.env.MONGO_URI);
+      mongoose.connect(process.env.MONGODB_URI);
       console.log("MongoDB Connected");
     } catch (error: any) {
       console.error("Error connecting to MongoDB:", error.message);
