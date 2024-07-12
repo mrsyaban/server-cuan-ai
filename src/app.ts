@@ -9,6 +9,7 @@ import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import User, { IUser } from "./models/user.model";
 import { AuthRouter } from "./routers/auth.router";
 import { UserRouter } from "./routers/user.router";
+import { StockRouter } from "./routers/stock.router";
 dotenv.config();
 
 export class App {
@@ -16,11 +17,14 @@ export class App {
   server: Express;
 
   constructor() {
-    this._port = parseInt(process.env.PORT || "3000");
+    console.log("jdjd");
     this.connectDB();
+    console.log("ddd");
+    this._port = parseInt(process.env.PORT || "3000");
     this.server = express();
     const authRouter = new AuthRouter();
     const userRouter = new UserRouter();
+    const stockRouter = new StockRouter();
 
     this.server.use(
       cors({ origin: "http://localhost:5173", credentials: true }),
@@ -82,8 +86,11 @@ export class App {
     });
 
     // Routings
-    this.server.use(authRouter.getRoute());
-    this.server.use(userRouter.getRoute());
+    this.server.use(
+      authRouter.getRoute(),
+      userRouter.getRoute(),
+      stockRouter.getRoute()
+    );
   }
 
   connectDB() {
@@ -94,10 +101,9 @@ export class App {
           "MONGO_URI is not defined in the environment variables."
         );
       }
-      mongoose
-        .connect(process.env.MONGO_URI)
-        .then(() => console.log("MongoDB Connected"))
-        .catch((err) => console.log(err));
+      mongoose.connect(process.env.MONGO_URI)
+      console.log("MongoDB Connected");
+       
     } catch (error: any) {
       console.error("Error connecting to MongoDB:", error.message);
       throw error;
