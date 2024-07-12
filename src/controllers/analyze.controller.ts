@@ -2,13 +2,19 @@ import { Request, Response } from "express";
 import { generateSentimentAnalysis } from "../service/sentiment.gemini";
 import { generateHealthAnalysis } from "../service/health.gemini";
 import StockModel from "../models/stocks.model";
+import { extractNews } from "../service/extract-news";
 
 export class AnalyzeController {
   getSentimentAnalysis() {
     return async (req: Request, res: Response) => {
       try {
         const stock_code = req.body["code"] as string;
-        const news = req.body["news"] as string;
+        let news = req.body["news"] as string;
+        if (news.length === 0) {
+          const news_url = req.body["url"] as string;
+          news = (await extractNews(news_url)).text;
+        }
+        console.log(news);
         const stockModel = StockModel;
         const stock_data = await stockModel.mongooseModel.findOne({
           code: stock_code,
