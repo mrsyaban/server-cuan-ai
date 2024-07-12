@@ -9,6 +9,7 @@ import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import User, { IUser } from "./models/user.model";
 import { AuthRouter } from "./routers/auth.router";
 import { UserRouter } from "./routers/user.router";
+import { AnalyzeRouter } from "./routers/analyze.router";
 dotenv.config();
 
 export class App {
@@ -21,6 +22,7 @@ export class App {
     this.server = express();
     const authRouter = new AuthRouter();
     const userRouter = new UserRouter();
+    const analyzeRouter = new AnalyzeRouter();
 
     this.server.use(
       cors({ origin: "http://localhost:5173", credentials: true }),
@@ -84,6 +86,7 @@ export class App {
     // Routings
     this.server.use(authRouter.getRoute());
     this.server.use(userRouter.getRoute());
+    this.server.use(analyzeRouter.getRoute());
   }
 
   connectDB() {
