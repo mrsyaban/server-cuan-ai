@@ -15,7 +15,7 @@ export class AnalyzeController {
         });
         if (stock_data) {
           // TODO Kasih semua topic but how
-          const topic = stock_data.makro[0];
+          const topic = stock_data.makro;
           const analyzeRes = await generateSentimentAnalysis(
             stock_code,
             topic,
