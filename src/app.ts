@@ -9,6 +9,7 @@ import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import User, { IUser } from "./models/user.model";
 import { AuthRouter } from "./routers/auth.router";
 import { UserRouter } from "./routers/user.router";
+import { AnalyzeRouter } from "./routers/analyze.router";
 import { StockRouter } from "./routers/stock.router";
 dotenv.config();
 
@@ -22,6 +23,7 @@ export class App {
     this.server = express();
     const authRouter = new AuthRouter();
     const userRouter = new UserRouter();
+    const analyzeRouter = new AnalyzeRouter();
     const stockRouter = new StockRouter();
 
     this.server.use(
@@ -87,7 +89,8 @@ export class App {
     this.server.use(
       authRouter.getRoute(),
       userRouter.getRoute(),
-      stockRouter.getRoute()
+      stockRouter.getRoute(),
+      analyzeRouter.getRoute()
     );
   }
 
@@ -99,9 +102,8 @@ export class App {
           "MONGO_URI is not defined in the environment variables."
         );
       }
-      mongoose.connect(process.env.MONGO_URI)
+      mongoose.connect(process.env.MONGO_URI);
       console.log("MongoDB Connected");
-       
     } catch (error: any) {
       console.error("Error connecting to MongoDB:", error.message);
       throw error;
