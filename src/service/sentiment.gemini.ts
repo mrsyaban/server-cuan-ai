@@ -9,35 +9,25 @@ const vertex_ai = new VertexAI({
   project: "gen-lang-client-0945252361",
   location: "us-central1",
 });
-const model = "gemini-1.5-flash-001";
+const model = "gemini-1.5-pro-001";
 const textsi_1 = {
   text: `
-I will provide you with input in the following format:
-
-- stock: [stock name]
-- net_profit: [value]
-- eps: [value]
-- pbv: [value]
-- roe: [value]
-- debt/equity: [value]
-
-Your task is to analyze the health of the company based on the provided financial values. Here are the abbreviations:
-- net_profit: Net Profit
-- eps: Earnings Per Share
-- pbv: Price to Book Value
-- roe: Return on Equity
-- debt/equity: Debt to Equity Ratio
-
-Provide a complete summary of the company's health based on these values (MUST mention the stock name in summary) and assign a health score between 0 and 10 (decimals allowed with accuracy to 0.1, with 5.0 being the netral). Don't give suggestions to do further research.
-
-Return the response as a JSON-like string (only change the values, keep the exact same string format) such as:
-{
-  "company_health": {
-    "score": 7.7,
-    "summary": "STOCK NAME IS Your analysis here."
+  Return the response as a JSON-like string (only change the values, keep the exact same string format) such as:
+  {
+    "realtime_analysis": {
+      "sentiment": 2.1,
+      "reasoning": "wawaawa"
+    }
   }
-}
-`,
+  I will provide you with input in the following format:
+  
+  - stock: [stock name]
+  - topics: array of  '(some topic) (sentiment value)' 
+  - news: [news]
+  
+  Your task is to analyze the sentiment of the stock's price (with the each topic is affecting positively(if sentiment is 1) or negatively (is the sentiment is -1) with the price) based on the news and provide a sentiment value between 0 and 10 (decimals allowed with accuracy to 0.1, with 5.0 being the netral) along with reasoning. Note that the stock parameter is just a name for the stock being analyzed and should not be linked or considered as the real company behind it.
+  
+  `,
 };
 
 const generativeModel = vertex_ai.preview.getGenerativeModel({
@@ -72,31 +62,32 @@ const generativeModel = vertex_ai.preview.getGenerativeModel({
 
 export async function generateSentimentAnalysis(
   stock: string,
-  net_profit: number,
-  eps: number,
-  pbv: number,
-  roe: number,
-  debt_equity: number
+  topic: { name: String; sentiment: Number }[],
+  news: string
 ) {
-  const req = {
-    contents: [
-      {
-        role: "user",
-        parts: [
-          {
-            text: `stock: ${stock} net_profit:${net_profit} eps:${eps} pbv:${pbv} roe:${roe} debt/equity:${debt_equity} `,
-          },
-        ],
-      },
-    ],
-  };
+  try {
+    const req = {
+      contents: [
+        {
+          role: "user",
+          parts: [
+            {
+              text: `topics: ${topic.map((val) => `${val.name} ${val.sentiment}`)} stock: ${stock} news: ${news}`,
+            },
+          ],
+        },
+      ],
+    };
 
-  const resp = await generativeModel.generateContent(req);
+    const resp = await generativeModel.generateContent(req);
 
-  const response =
-    resp?.response?.candidates?.[0]?.content?.parts?.[0]?.text ??
-    '{"company_health": {"score": 0, "summary": "Connection Error."}}';
+    const response =
+      resp?.response?.candidates?.[0]?.content?.parts?.[0]?.text ??
+      '{"sentiment": 0, "reasoning": "Connection error"}';
 
-  const sentiment_json = JSON.parse(response);
-  return sentiment_json;
+    const sentiment_json = await JSON.parse(response);
+    return sentiment_json;
+  } catch (error) {
+    throw error;
+  }
 }
