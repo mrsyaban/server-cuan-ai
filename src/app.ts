@@ -11,6 +11,7 @@ import { AuthRouter } from "./routers/auth.router";
 import { UserRouter } from "./routers/user.router";
 import { AnalyzeRouter } from "./routers/analyze.router";
 import { StockRouter } from "./routers/stock.router";
+import e from "express";
 dotenv.config();
 
 export class App {

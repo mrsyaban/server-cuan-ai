@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { generateHealthAnalysis } from "../service/health.gemini";
 import { generateSentimentAnalysis } from "../service/sentiment.gemini";
+import { generateHealthAnalysis } from "../service/health.gemini";
 import StockModel from "../models/stocks.model";
 
 export class AnalyzeController {
@@ -16,7 +16,7 @@ export class AnalyzeController {
         if (stock_data) {
           // TODO Kasih semua topic but how
           const topic = stock_data.makro[0];
-          const analyzeRes = await generateHealthAnalysis(
+          const analyzeRes = await generateSentimentAnalysis(
             stock_code,
             topic,
             news
@@ -46,7 +46,7 @@ export class AnalyzeController {
         const roe = stock_data?.fundamental.roe;
         const debt_equity = stock_data?.fundamental.equity;
         if (stock_code && net_profit && eps && pbv && roe && debt_equity) {
-          const analyzeRes = await generateSentimentAnalysis(
+          const analyzeRes = await generateHealthAnalysis(
             stock_code,
             net_profit,
             eps,
