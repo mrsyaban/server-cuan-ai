@@ -28,9 +28,6 @@ export class App {
     const stockRouter = new StockRouter();
 
     this.server.use(
-      express.static("public")
-    );
-    this.server.use(
       cors({ origin: "http://localhost:5173", credentials: true }),
       express.json(),
       express.urlencoded()
