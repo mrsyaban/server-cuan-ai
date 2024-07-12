@@ -6,6 +6,7 @@ export class UserController {
     return async (req: Request, res: Response) => {
       try {
         const user = req.user as IUser;
+        console.log("user:", user)
         if (user) {
           const updatedUser = await User.findById(user._id);
           res.json(updatedUser);
