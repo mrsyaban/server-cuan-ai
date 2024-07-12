@@ -27,8 +27,13 @@ export class App {
     const analyzeRouter = new AnalyzeRouter();
     const stockRouter = new StockRouter();
 
+    const corsOptions = {
+      origin: process.env.CLIENT_URL,
+      credentials: true, 
+    };
+
     this.server.use(
-      cors({ origin: "*", credentials: true }),
+      cors(corsOptions),
       express.json(),
       express.urlencoded()
     );
@@ -85,7 +90,7 @@ export class App {
         done(error, null);
       }
     });
-
+    this.server.options('*', cors(corsOptions));
     // Routings
     this.server.use(
       authRouter.getRoute(),
@@ -112,15 +117,8 @@ export class App {
   }
 
   run() {
-    const serverUrl = process.env.SERVER_URL || `http://localhost:${this._port}`;
-    const urlParts = new URL(serverUrl);
-    
-    const port = parseInt(urlParts.port, 10) || this._port;
-    const hostname = urlParts.hostname;
-  
-    this.server.listen(port, hostname, () => {
-      console.log(`Server listening on ${serverUrl}`);
-    });
-  
+    this.server.listen(this._port, () =>
+      console.log(`listening on port ${this._port}`)
+    );
   }
 }
