@@ -11,7 +11,6 @@ import { AuthRouter } from "./routers/auth.router";
 import { UserRouter } from "./routers/user.router";
 import { AnalyzeRouter } from "./routers/analyze.router";
 import { StockRouter } from "./routers/stock.router";
-import e from "express";
 dotenv.config();
 
 export class App {
@@ -29,21 +28,17 @@ export class App {
 
     const corsOptions = {
       origin: process.env.CLIENT_URL,
-      credentials: true, 
+      credentials: true,
     };
 
-    this.server.use(
-      cors(corsOptions),
-      express.json(),
-      express.urlencoded()
-    );
+    this.server.use(cors(corsOptions), express.json(), express.urlencoded());
 
     this.server.use(
       session({
         secret: process.env.SESSION_SECRET || "secret",
         resave: false,
         saveUninitialized: false,
-        cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000 }, // Set to true if using https
+        cookie: { secure: true, maxAge: 24 * 60 * 60 * 1000, httpOnly: false }, // Set to true if using https
       })
     );
 
@@ -55,7 +50,7 @@ export class App {
         {
           clientID: process.env.GOOGLE_CLIENT_ID || "",
           clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
-          callbackURL: `${process.env.SERVER_URL}/auth/google/callback`,
+          callbackURL: `${process.env.URL}/auth/google/callback`,
         },
         async (accessToken, refreshToken, profile, done) => {
           try {
@@ -90,25 +85,18 @@ export class App {
         done(error, null);
       }
     });
-    this.server.options('*', cors(corsOptions));
+    this.server.options("*", cors(corsOptions));
     // Routings
-    this.server.use(
-      authRouter.getRoute(),
-      userRouter.getRoute(),
-      stockRouter.getRoute(),
-      analyzeRouter.getRoute()
-    );
+    this.server.use(authRouter.getRoute(), userRouter.getRoute(), stockRouter.getRoute(), analyzeRouter.getRoute());
   }
 
   connectDB() {
     // Database
     try {
-      if (!process.env.MONGO_URI) {
-        throw new Error(
-          "MONGO_URI is not defined in the environment variables."
-        );
+      if (!process.env.MONGODB_URI) {
+        throw new Error("MONGO_URI is not defined in the environment variables.");
       }
-      mongoose.connect(process.env.MONGO_URI);
+      mongoose.connect(process.env.MONGODB_URI);
       console.log("MongoDB Connected");
     } catch (error: any) {
       console.error("Error connecting to MongoDB:", error.message);
@@ -117,8 +105,6 @@ export class App {
   }
 
   run() {
-    this.server.listen(this._port, () =>
-      console.log(`listening on port ${this._port}`)
-    );
+    this.server.listen(this._port, () => console.log(`listening on port ${this._port}`));
   }
 }

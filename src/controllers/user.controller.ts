@@ -6,6 +6,7 @@ export class UserController {
     return async (req: Request, res: Response) => {
       try {
         const user = req.user as IUser;
+        console.log("getuUser:", user)
         if (user) {
           const updatedUser = await User.findById(user._id);
           res.json(updatedUser);
@@ -23,10 +24,11 @@ export class UserController {
     return async (req: Request, res: Response) => {
       try {
         const userId = req.body.userId as string;
-        const updateRiskProfile = await User.updateOne(
+        await User.updateOne(
           { googleId: userId  }, 
           { $set: { riskProfile: "moderate" } }  
         );
+        res.status(200).json({message: "Success"})
       } catch (error) {
         console.error("Error fetching user:", error);
         res.status(500).json({ message: "Internal server error" });
