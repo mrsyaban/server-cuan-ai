@@ -1,24 +1,19 @@
-import mongoose from "mongoose";
-const { Schema, model } = mongoose;
-import { ObjectId } from "mongodb";
+import mongoose, { Document, Schema } from 'mongoose';
 
-class UserModel {
-    mongooseModel: any
-
-    constructor() {
-        const userSchema = new mongoose.Schema({
-            name: { type: String, required: true },
-            createAt: { type: Date, default: Date.now },
-            updateAt: { type: Date, default: null },
-            deletedAt: { type: Date, default: null },
-        });
-        const User = mongoose.model("User", userSchema);
-        this.mongooseModel = User;
-    }
-
-    
+export interface IUser extends Document {
+  googleId: string;
+  displayName: string;
+  email: string;
+  riskProfile: String | undefined;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-export default UserModel;
+const UserSchema: Schema = new Schema({
+  googleId: { type: String, required: true, unique: true },
+  displayName: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
+  riskProfile: { type: String, default: undefined},
+}, { timestamps: true });
 
-
+export default mongoose.model<IUser>('User', UserSchema);
