@@ -17,9 +17,7 @@ export class App {
   server: Express;
 
   constructor() {
-    console.log("jdjd");
     this.connectDB();
-    console.log("ddd");
     this._port = parseInt(process.env.PORT || "3000");
     this.server = express();
     const authRouter = new AuthRouter();
