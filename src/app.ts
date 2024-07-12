@@ -29,14 +29,10 @@ export class App {
 
     const corsOptions = {
       origin: process.env.CLIENT_URL,
-      credentials: true, 
+      credentials: true,
     };
 
-    this.server.use(
-      cors(corsOptions),
-      express.json(),
-      express.urlencoded()
-    );
+    this.server.use(cors(corsOptions), express.json(), express.urlencoded());
 
     this.server.use(
       session({
@@ -55,7 +51,7 @@ export class App {
         {
           clientID: process.env.GOOGLE_CLIENT_ID || "",
           clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
-          callbackURL: `${process.env.SERVER_URL}/auth/google/callback`,
+          callbackURL: `${process.env.URL}/auth/google/callback`,
         },
         async (accessToken, refreshToken, profile, done) => {
           try {
@@ -90,23 +86,16 @@ export class App {
         done(error, null);
       }
     });
-    this.server.options('*', cors(corsOptions));
+    this.server.options("*", cors(corsOptions));
     // Routings
-    this.server.use(
-      authRouter.getRoute(),
-      userRouter.getRoute(),
-      stockRouter.getRoute(),
-      analyzeRouter.getRoute()
-    );
+    this.server.use(authRouter.getRoute(), userRouter.getRoute(), stockRouter.getRoute(), analyzeRouter.getRoute());
   }
 
   connectDB() {
     // Database
     try {
       if (!process.env.MONGO_URI) {
-        throw new Error(
-          "MONGO_URI is not defined in the environment variables."
-        );
+        throw new Error("MONGO_URI is not defined in the environment variables.");
       }
       mongoose.connect(process.env.MONGO_URI);
       console.log("MongoDB Connected");
@@ -117,8 +106,6 @@ export class App {
   }
 
   run() {
-    this.server.listen(this._port, () =>
-      console.log(`listening on port ${this._port}`)
-    );
+    this.server.listen(this._port, () => console.log(`listening on port ${this._port}`));
   }
 }
