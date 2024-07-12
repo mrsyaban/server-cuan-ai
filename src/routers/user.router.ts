@@ -11,7 +11,7 @@ export class UserRouter {
   getRoute() {
     const router = Router();
     router.get("/user", this.userController.getUser())
-    .post("/risk-profile-test", this.userController.postRiskProfileTest());
+    router.post("/risk-profile-test", this.userController.postRiskProfileTest());
     return router;
   }
 }
