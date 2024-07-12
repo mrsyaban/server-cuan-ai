@@ -28,7 +28,7 @@ export class App {
     const stockRouter = new StockRouter();
 
     this.server.use(
-      cors({ origin: ["http://localhost:5173", "https://cuan-ai.vercel.app"], credentials: true }),
+      cors({ origin: process.env.CLIENT_URL, credentials: true }),
       express.json(),
       express.urlencoded()
     );
@@ -50,7 +50,7 @@ export class App {
         {
           clientID: process.env.GOOGLE_CLIENT_ID || "",
           clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
-          callbackURL: "http://localhost:3000/auth/google/callback",
+          callbackURL: `${process.env.SERVER_URL}/auth/google/callback`,
         },
         async (accessToken, refreshToken, profile, done) => {
           try {
