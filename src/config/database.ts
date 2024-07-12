@@ -2,10 +2,10 @@ import mongoose, { Connection } from "mongoose";
 
 const connectToDatabase = async (): Promise<Connection> => {
     try {
-        if (!process.env.MONGO_URI) {
+        if (!process.env.MONGODB_URI) {
             throw new Error("MONGO_URI is not defined in the environment variables.");
         }
-        const connection = await mongoose.connect(process.env.MONGO_URI);
+        const connection = await mongoose.connect(process.env.MONGODB_URI);
         console.log("MongoDB Connected");
         return connection.connection;
     } catch (error: any) {
