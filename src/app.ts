@@ -28,7 +28,7 @@ export class App {
     const stockRouter = new StockRouter();
 
     this.server.use(
-      cors({ origin: "http://localhost:5173", credentials: true }),
+      cors({ origin: ["http://localhost:5173", "https://cuan-ai.vercel.app"], credentials: true }),
       express.json(),
       express.urlencoded()
     );
