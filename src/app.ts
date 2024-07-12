@@ -28,7 +28,7 @@ export class App {
     const stockRouter = new StockRouter();
 
     this.server.use(
-      cors({ origin: process.env.CLIENT_URL, credentials: true }),
+      cors({ origin: "*", credentials: true }),
       express.json(),
       express.urlencoded()
     );
@@ -112,8 +112,15 @@ export class App {
   }
 
   run() {
-    this.server.listen(this._port, () =>
-      console.log(`listening on port ${this._port}`)
-    );
+    const serverUrl = process.env.SERVER_URL || `http://localhost:${this._port}`;
+    const urlParts = new URL(serverUrl);
+    
+    const port = parseInt(urlParts.port, 10) || this._port;
+    const hostname = urlParts.hostname;
+  
+    this.server.listen(port, hostname, () => {
+      console.log(`Server listening on ${serverUrl}`);
+    });
+  
   }
 }
