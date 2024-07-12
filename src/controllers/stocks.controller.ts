@@ -15,7 +15,7 @@ export class StocksController {
       try {
           const stocks = await this.model.find();
           if (stocks.length > 0) {
-              res.status(200).json(stocks);
+              res.json(stocks);
           } else {
               res.status(404).json({ message: 'Stocks not found' });
           }
