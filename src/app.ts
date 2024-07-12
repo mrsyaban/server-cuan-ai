@@ -7,10 +7,11 @@ import { LoginRouter } from "./routers/login.router";
 dotenv.config();
 
 export class App {
-    private _port: number = 3000;
+    private _port: number;
     server: Express;
     
   constructor() {
+    this._port = parseInt(process.env.PORT || "3000");
     this.connectDB();
     this.server = express();
     const loginRouter = new LoginRouter();
