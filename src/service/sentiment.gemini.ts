@@ -22,7 +22,7 @@ const textsi_1 = {
   I will provide you with input in the following format:
   
   - stock: [stock name]
-  - topic: array of { name: String; sentiment: Number }
+  - topics: array of  '(some topic) (sentiment value)' 
   - news: [news]
   
   Your task is to analyze the sentiment of the stock's price (with the each topic is affecting positively(if sentiment is 1) or negatively (is the sentiment is -1) with the price) based on the news and provide a sentiment value between 0 and 10 (decimals allowed with accuracy to 0.1, with 5.0 being the netral) along with reasoning. Note that the stock parameter is just a name for the stock being analyzed and should not be linked or considered as the real company behind it.
@@ -72,7 +72,7 @@ export async function generateSentimentAnalysis(
           role: "user",
           parts: [
             {
-              text: `topic: ${topic} stock: ${stock} news: ${news}`,
+              text: `topics: ${topic.map((val) => `${val.name} ${val.sentiment}`)} stock: ${stock} news: ${news}`,
             },
           ],
         },
