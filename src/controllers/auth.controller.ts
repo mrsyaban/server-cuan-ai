@@ -34,7 +34,7 @@ export class AuthController {
 
   authenticateGoogleCallback() {
     return (req: Request, res: Response) => {
-      res.redirect(`${process.env.CLIENT_URL}`||"");
+      res.redirect(`${process.env.CLIENT_URL}/risk-profile-test/`||"");
     };
   }
 
